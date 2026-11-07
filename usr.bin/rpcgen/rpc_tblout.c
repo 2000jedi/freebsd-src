@@ -84,8 +84,11 @@ write_table(definition *def)
 
 	for (vp = def->def.pr.versions; vp != NULL; vp = vp->next) {
 		warning = 0;
-		s_print(progvers, "%s_%s",
-		    locase(def->def_name), vp->vers_num);
+		if (strlen(def->def_name) >= sizeof(progvers))
+			error("program name is too long");
+		if ((size_t)snprintf(progvers, sizeof(progvers), "%s_%s",
+		    locase(def->def_name), vp->vers_num) >= sizeof(progvers))
+			error("program and version names are too long");
 		/* print the table header */
 		f_print(fout, tbl_hdr, progvers);
 
