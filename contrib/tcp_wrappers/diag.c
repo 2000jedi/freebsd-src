@@ -31,14 +31,14 @@ jmp_buf tcpd_buf;
 
 static void tcpd_diag(int severity, char *tag, char *format, va_list ap)
 {
-    char    fmt[BUFSIZ];
+    char    msg[BUFSIZ];
 
+    vsnprintf(msg, sizeof(msg), format, ap);
     if (tcpd_context.file)
-	sprintf(fmt, "%s: %s, line %d: %s",
-		tag, tcpd_context.file, tcpd_context.line, format);
+	syslog(severity, "%s: %s, line %d: %s",
+		tag, tcpd_context.file, tcpd_context.line, msg);
     else
-	sprintf(fmt, "%s: %s", tag, format);
-    vsyslog(severity, fmt, ap);
+	syslog(severity, "%s: %s", tag, msg);
 }
 
 /* tcpd_warn - report problem of some sort and proceed */
